@@ -1,6 +1,9 @@
 
 # Load packages.
+library(plyr)
+library(dplyr)
 library(rgbif)
+library(stringr)
 
 # Make an object to help navigate the subdirectories.
 wd <- list()
