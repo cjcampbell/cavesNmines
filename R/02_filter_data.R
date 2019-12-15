@@ -38,11 +38,10 @@ for(a in 1:length(myMatches)){
 # }
 # 
 
-
 tidyDat <- dat %>% 
   #dplyr::select( append(cols2Keep, c("codeword", "colWithCodeword" ) )) %>% 
   dplyr::filter(!is.na(codeword)) %>% 
   mutate_if(is.character, list(~na_if(., "<NA>"))) %>% 
   select_if(~sum(!is.na(.)) > 0) # remove columns with only NA
 
-
+save(tidyDat, file = file.path(wd$bin, "tidyDat.Rdata"))
