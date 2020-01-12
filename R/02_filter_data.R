@@ -2,6 +2,16 @@
 # Import data
 load(file.path(wd$data, "data_import.Rdata"), verbose = T)
 
+
+# New, better way:
+searchterms <- c("cave", "mine", "grotto", "quarry","grotte","hibernaculum") %>% 
+  lapply(., function(i) paste0("\\<", i, "\\>")) # search for whole words
+
+dat %>% 
+  dplyr::filter( basisOfRecord %in% c("FOSSIL_SPECIMEN", "UKNOWN") == FALSE) %>% 
+  filter_all(any_vars(grepl(paste(searchterms, collapse="|"),.))) 
+
+
 # Columns to keep regardless of match
 cols2Keep <- c(
   "species", "rightsHolder", "identifier", "recordedBy", "institutionCode",
@@ -45,3 +55,4 @@ tidyDat <- dat %>%
   select_if(~sum(!is.na(.)) > 0) # remove columns with only NA
 
 save(tidyDat, file = file.path(wd$bin, "tidyDat.Rdata"))
+write.csv(tidyDat, file = file.path(wd$bin, "tidyDat.csv"))
