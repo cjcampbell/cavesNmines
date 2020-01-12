@@ -16,9 +16,9 @@ if(makemap == TRUE){
   
   # Combine into one polygon; (optionally) simplify.
   NoAm <- rbind(MEX, USA, CAN)
-  save(NoAm, file = paste0( wd$bin, "NoAm.Rdata") )
+  save(NoAm, file = file.path( wd$bin, "NoAm.Rdata") )
   NoAm1 <- rgeos::gSimplify(NoAm, tol=0.01, topologyPreserve=TRUE)
-  save(NoAm1, file = paste0( wd$bin, "NoAm1.Rdata") )
+  save(NoAm1, file = file.path( wd$bin, "NoAm1.Rdata") )
   
   # Get the main polygons, will determine by area.
   getSmallPolys <- function(poly, minarea=0.01) {
