@@ -23,7 +23,7 @@ cols2Keep <- c(
 searchterms <- c("cave", "mine", "grotto", "quarry","grotte")
 
 myMatches <- lapply(searchterms,  function(term){
-  row_nums <- sapply(1:ncol(dat), function(x) grep(term, dat[,x]) ) %>% 
+  row_nums <- sapply(1:ncol(dat), function(x) grep(paste0("\\b", term, "\\b"), dat[,x]) ) %>% 
     unlist
   # col_nums <- sapply(1:nrow(dat), function(y) grep(term, dat[y,]) ) %>% 
   #   unlist 
