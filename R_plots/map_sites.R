@@ -1,6 +1,6 @@
 
 source('~/cavesNmines/R/00_Setup.R')
-readRDS( file.path(wd$bin, "records_coded_tidy.rds") )
+records_coded_tidy <- readRDS( file.path(wd$bin, "records_coded_tidy.rds") )
 
 # Generate / load map data
 makemap <- FALSE
@@ -65,7 +65,7 @@ plot_map <-   geom_polygon(
 )
 
 ggplot(
-  data = records_coded_tidy_pooled,
+  data = records_coded_tidy,
   aes(x = lon, y = lat)
 ) +
   plot_map +
@@ -81,8 +81,8 @@ ggplot(
   theme_minimal() +
   theme(
     panel.grid = element_blank(),
-    panel.grid.major = element_line(color = "grey95"),
-    legend.position = "none"
+    panel.grid.major = element_line(color = "grey95")#,
+    #legend.position = "none"
   )
 
 
