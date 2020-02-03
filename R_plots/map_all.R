@@ -43,29 +43,36 @@ NoAm_sf_aea <- st_transform(NoAm_sf, crs = my_proj4string) %>%
 
 plot_map <- geom_sf(
   data = NoAm_sf_aea, 
-  size = 0.1, colour = "grey30", fill = NA
+  size = 0.1, colour = "black", fill = "white"
 )
 
+
 # Load karst maps ---------------------------------------------------------
-
-mylayers <- wd$data %>% 
-  list.files(recursive = TRUE, pattern = ".shp$", full.names = TRUE) %>% 
-  grep("Continguous48", ., value = TRUE) %>% 
-  lapply(sf::st_read) %>% 
-  lapply(sf::st_simplify, preserveTopology = TRUE, dTolerance = 1e20) 
-
-layer1_aea <- mylayers[[1]] %>% 
-  st_transform(crs = my_proj4string) %>% 
-  sf::st_simplify(dTolerance = simplify_by)
+loadlayers <- FALSE
+if(loadlayers == TRUE){
+  mylayers <- wd$data %>% 
+    list.files(recursive = TRUE, pattern = ".shp$", full.names = TRUE) %>% 
+    grep("Continguous48", ., value = TRUE) %>% 
+    lapply(sf::st_read) %>% 
+    lapply(sf::st_simplify, preserveTopology = TRUE, dTolerance = 1e20) 
+  
+  layer1_aea <- mylayers[[1]] %>% 
+    st_transform(crs = my_proj4string) %>% 
+    sf::st_simplify(dTolerance = simplify_by)
+  
+  save(layer1_aea, file = file.path(wd$bin, "layer1_aea.Rdata"))
+} else load(file.path(wd$bin, "layer1_aea.Rdata"))
 
 plot_karst <- ggplot() + 
   geom_sf(data = layer1_aea, fill = "grey90", color = "grey90" )
 
 
 # Load points -------------------------------------------------------------
+ord_species <- c("LACI", "LABO", "LANO")
 
 records_coded_tidy <- readRDS( file.path(wd$bin, "records_coded_tidy.rds") ) %>% 
-  dplyr::mutate(Species_3 = if_else(Species == "LABL", "LABO", Species))
+  dplyr::mutate(Species_3 = if_else(Species == "LABL", "LABO", Species)) %>% 
+  dplyr::mutate(Species = factor(Species, levels = ord_species))
 
 set.seed(420)
 records_aea <- records_coded_tidy %>% 
@@ -79,19 +86,19 @@ records_aea <- records_coded_tidy %>%
 plot_points <- geom_sf(
   data = records_aea,
   aes(fill = Species_3, shape = def_alive),
-  size = 3, color = "black", alpha = 0.85
+  size = 11, color = "black", alpha = 0.85, stroke = 1.6
 )
 
 pt_bbox <- attributes(records_aea$geometry)$bbox
 
 # plot together ----------------------------------------------------------
 
-plot_karst + 
+bigmap <- plot_karst + 
   plot_map +
   plot_points +
   coord_sf(
-    xlim = c(pt_bbox$xmin - 2e6, pt_bbox$xmax + 8e5),
-    ylim = c(pt_bbox$ymin - 5e5, pt_bbox$ymax + 5e5),
+    xlim = c(pt_bbox$xmin - 20e5, pt_bbox$xmax + 10e5),
+    ylim = c(pt_bbox$ymin - 9e5, pt_bbox$ymax + 12e5),
     expand = FALSE
   ) +
   scale_shape_manual(values = c(21,23), labels = c("No", "Yes")) +
@@ -99,11 +106,13 @@ plot_karst +
   theme_minimal() +
   theme(
     panel.grid = element_blank(),
-    panel.grid.major = element_line(color = "grey95"),
+    panel.grid.major = element_line(color = "black"),
     legend.position = "none",
-    axis.text = element_blank()
+    axis.text = element_blank(),
+    plot.margin = unit(c(0,0,0,0), "in")
   )
 
 # save maps ---------------------------------------------------------------
 
+ggsave(bigmap, filename = file.path(wd$figs, "bigmap.tif"), device = "tiff", width = 48, height = 36, units = "in", dpi = 300)
 
