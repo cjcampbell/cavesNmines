@@ -20,12 +20,24 @@ timing_records %>%
   scale_x_continuous(name = "Month", limits = c(0,12), expand = c(0,0)) +
   ylab("Density") +
   theme_minimal() +
-  scale_fill_manual(values = rev(viridis::plasma(3))) +
+  scale_fill_manual(
+    values = rev(viridis::plasma(3)),
+    labels = c(
+      expression("Hoary bat ("*italic("Lasiurus cinereus")*")"), 
+      expression("Eastern red bat ("*italic("Lasiurus borealis")*")"),
+      expression("Silver-haired bat ("*italic("Lasionycteris noctivagans")*")")
+    )
+    ) +
   theme(
     panel.grid = element_blank(),
-    legend.position = "right",
-    text = element_text(size = 20)
+    legend.position = c(0.25,0.85),
+    text = element_text(size = 15),
+    axis.title.x = element_text(size = 20),
+    legend.text.align = 0,
+    plot.margin = unit(c(0.1,1,0.1,0.15), "cm"),
+    panel.background = element_rect(fill = "transparent",colour = NA),
+    plot.background = element_rect(fill = "transparent",colour = NA)
   )
 
-ggsave(filename = file.path(wd$fig, "density_by_month.tif"), device = "tiff", width = 10, height = 4.65, units = "in")
+ggsave(filename = file.path(wd$fig, "density_by_month.tif"), device = "tiff", width = 10, height = 4.65, units = "in", bg = "transparent")
 
