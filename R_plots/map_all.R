@@ -57,8 +57,8 @@ if(loadlayers == TRUE){
   mylayers <- wd$data %>% 
     list.files(recursive = TRUE, pattern = ".shp$", full.names = TRUE) %>% 
     grep("Continguous48", ., value = TRUE) %>% 
-    lapply(sf::st_read) %>% 
-    lapply(sf::st_simplify, preserveTopology = TRUE, dTolerance = 1e20) 
+    lapply(sf::st_read) #%>% 
+    #lapply(sf::st_simplify, preserveTopology = TRUE, dTolerance = 1e20) 
   
   layer1_aea <- mylayers[[1]] %>% 
     st_transform(crs = my_proj4string) #%>% 
@@ -70,7 +70,7 @@ if(loadlayers == TRUE){
 plot_karst <- geom_sf(data = layer1_aea, fill = "grey90", color = "grey90" )
 
 # Load points -------------------------------------------------------------
-ord_species <- c("LACI", "LABO", "LANO")
+ord_species <- c("LABO", "LACI", "LANO")
 
 records_coded_tidy <- readRDS( file.path(wd$bin, "records_coded_tidy.rds") ) %>% 
   dplyr::mutate(Species_3 = if_else(Species == "LABL", "LABO", Species)) %>% 
@@ -119,7 +119,13 @@ bigmap <- ggplot() +
     expand = FALSE
   ) +
   scale_shape_manual(values = c(21,23), labels = c("No", "Yes")) +
-  scale_fill_manual(values = rev(viridis::plasma(3))) +
+  scale_fill_manual(
+    values = c(
+      viridis::plasma(3)[2],
+      viridis::plasma(3)[3],
+      viridis::plasma(3)[1]
+    )
+  ) +
   theme_minimal() +
   theme(
     panel.grid.major = element_line(color = "grey80"),
@@ -139,7 +145,13 @@ bigmap_pointOnly <- ggplot() +
     expand = FALSE
   ) +
   scale_shape_manual(values = c(21,23), labels = c("No", "Yes")) +
-  scale_fill_manual(values = rev(viridis::plasma(3))) +
+  scale_fill_manual(
+    values = c(
+      viridis::plasma(3)[2],
+      viridis::plasma(3)[3],
+      viridis::plasma(3)[1]
+      )
+    ) +
   theme_minimal() +
   theme(
     panel.grid = element_blank(),
