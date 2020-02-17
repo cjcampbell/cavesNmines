@@ -13,7 +13,7 @@ p <- ggplot() +
     aes(x = x , y = y, shape = class, color = Species),
     size = 11, alpha = 0.85, stroke = 1.6
     ) +
-  scale_shape_manual(name = "Observation type", values = c(21,23)) +
+  scale_shape_manual(name = "Observation type", values = c(23,21)) +
   scale_color_manual(
     values = rev(viridis::plasma(3)),
     labels = c(
