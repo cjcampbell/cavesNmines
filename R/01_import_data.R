@@ -1,12 +1,20 @@
+# remotes::install_github("privefl/bigreadr")
+library(bigreadr)
+source('~/cavesNmines/R/00_Setup.R')
+mypath <- list.files(
+  pattern = "occurrence.txt", 
+  full.names = T, recursive = T,
+  file.path("/Users/cjcampbell", "BigZaddyData", "GBIF_20July2020_Chiroptera")
+)
+nlines(mypath)
 
-#### Get, Clean Data ###
-dat <- lapply(list(5218544, 5218543, 2432341), function(x){
-  my_search <- occ_search(
-    taxonKey = x, return = 'data', fields = 'all', limit=100000)
-  my_cit <- gbif_citation(my_search)
-  save( my_cit, file = file.path(wd$bin, paste0("rgbif_citation_", x, ".Rdata") ) )
-  return(my_search)
-}) %>% 
-  plyr::ldply()
+mdf_filtered <- big_fread1(mypath, every_nlines = 4e5, .transform = function(df) {
+  dplyr::filter(df, genus %in% c("Lasiurus", "Lasionycteris", "Aeorestes"))
+})
 
-save(dat, file = file.path(wd$data, "data_import.Rdata"))
+targetDir <- file.path("/Users/cjcampbell", "BigZaddyData", "GBIF_20July2020_filtered_Lasiurus_Lasionycteris")
+if(!dir.exists(targetDir)) dir.create(targetDir)
+
+write.csv(mdf_filtered, file = file.path(targetDir, "occurrences.csv"))
+
+
