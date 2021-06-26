@@ -7,4 +7,10 @@ bin/
 SBDN2020
 *.png
 *.tiff
+*.tif
 *.pptx
+*.jpg
+readme.txt
+data/
+daymet/
+litReview/
