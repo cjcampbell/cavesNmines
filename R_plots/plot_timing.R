@@ -1,9 +1,9 @@
 
-require(dplyr)
+require(tidyverse)
 
 ord_species <- c("LACI", "LABO", "LANO")
 
-timing_records <- readRDS( file.path(wd$bin, "records_coded_tidy.rds") ) %>% 
+timing_records <- readRDS( file.path(mwd$bin, "records_coded_tidy.rds") ) %>% 
   filter(def_alive == "Yes") %>% 
   dplyr::mutate(Month = stringr::str_trim(Month)) %>% 
   dplyr::mutate(tidy_month = if_else(Month == "7-8", as.numeric(7), if_else(Month == "Two winters", as.numeric(1), as.numeric(Month)))) %>% 
@@ -39,5 +39,5 @@ timing_records %>%
     plot.background = element_rect(fill = "transparent",colour = NA)
   )
 
-ggsave(filename = file.path(wd$fig, "density_by_month.tif"), device = "tiff", width = 10, height = 4.65, units = "in", bg = "transparent")
+ggsave(filename = file.path(mwd$fig, "density_by_month.tif"), device = "tiff", width = 10, height = 4.65, units = "in", bg = "transparent")
 

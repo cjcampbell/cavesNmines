@@ -1,16 +1,23 @@
 
 # Import data
-load(file.path(wd$data, "data_import.Rdata"), verbose = T)
+dat <- read.csv( file.path(targetDir, "occurrences.csv") )
 
+# Specify key words and terms.
+mySearchTerms <- c(
+  # English
+  "cave", "mine", "grotto", "quarry", "underground", "subterranean", "cavern", "tunnel","pit",
+  # French
+  "grotte", "mienne", "grotte", "carrière", "souterraine", "caverne", "tunnel", "fosse",
+  # Spanish
+  "cueva", "mina", "gruta", "cantera", "subterráneo", "caverna", "túnel", "pozo"
+)
 
-# New, better way:
-searchterms <- c("cave", "mine", "grotto", "quarry","grotte","hibernaculum") %>% 
-  lapply(., function(i) paste0("\\<", i, "\\>")) # search for whole words
-
-dat %>% 
-  dplyr::filter( basisOfRecord %in% c("FOSSIL_SPECIMEN", "UKNOWN") == FALSE) %>% 
-  filter_all(any_vars(grepl(paste(searchterms, collapse="|"),.))) 
-
+# # New, better way:
+# searchterms <- lapply(mySearchTerms, function(i) paste0("\\<", i, "\\>")) # search for whole words
+# 
+# dat %>% 
+#   dplyr::filter( basisOfRecord %in% c("FOSSIL_SPECIMEN", "UKNOWN") == FALSE) %>% 
+#   filter_all(any_vars(grepl(paste(mySearchTerms, collapse="|"),.))) 
 
 # Columns to keep regardless of match
 cols2Keep <- c(
@@ -19,10 +26,7 @@ cols2Keep <- c(
   "year", "month", "day"
   )
 
-# Specify key words and terms.
-searchterms <- c("cave", "mine", "grotto", "quarry","grotte")
-
-myMatches <- lapply(searchterms,  function(term){
+myMatches <- lapply(mySearchTerms,  function(term){
   row_nums <- sapply(1:ncol(dat), function(x) grep(paste0("\\b", term, "\\b"), dat[,x]) ) %>% 
     unlist
   # col_nums <- sapply(1:nrow(dat), function(y) grep(term, dat[y,]) ) %>% 
@@ -34,7 +38,9 @@ myMatches <- lapply(searchterms,  function(term){
 save(myMatches, file = file.path(wd$bin, "myMatches.Rdata"))
  
 # Select target rows, add identifier indicating which column has which key word
-dat <- dat %>% mutate(codeword = NA, colWithCodeword = NA)
+dat <- dat %>% mutate(codeword = NA
+                      #, colWithCodeword = NA
+                      )
 for(a in 1:length(myMatches)){
   dat[  myMatches[[a]][[1]] , "codeword"]        <-  myMatches[[a]][[2]]#myMatches[[a]][[3]]
   #dat[  myMatches[[a]][[1]] , "colWithCodeword"] <- colnames(dat)[ myMatches[[a]][[2]] ]

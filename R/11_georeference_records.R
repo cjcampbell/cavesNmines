@@ -84,6 +84,7 @@ secondary_sources_without_overlap <- records_coded %>%
 
 records_coded_tidy <- records_coded %>% 
   dplyr::filter(Source_primary_or_secondary == 1) %>% 
-  full_join(secondary_sources_without_overlap)
+  full_join(secondary_sources_without_overlap) %>% 
+  dplyr::mutate(ID = make.names(row_number()))
 
 saveRDS(records_coded_tidy, file = file.path(wd$bin, "records_coded_tidy.rds") )
