@@ -5,4 +5,6 @@
 .DS_Store
 bin/
 SBDN2020
-figs
+*.png
+*.tiff
+*.pptx
